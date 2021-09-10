@@ -1,2 +1,3 @@
 # yelpCamp
-Start
+
+A website that is akin to Yelp with campgrounds
