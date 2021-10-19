@@ -6,11 +6,12 @@ Made utilizing Express + MongoDB + EJS
 
 # Dependencies used so far:
 
-connect-flash
-ejs
-ejs-mate
-express
-express-session
-joi
-method-override
-mongoose
+- connect-flash
+- ejs
+- ejs-mate
+- express
+- express-session
+- joi
+- method-override
+- mongoose
+- passport
