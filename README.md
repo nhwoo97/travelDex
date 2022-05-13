@@ -2,7 +2,9 @@
 
 A website that is akin to Yelp with travel locations created server side.
 
-Made utilizing Express + MongoDB + EJS
+User is able to create account and login. User can also post, comment, and rate. 
+
+Made utilizing Express + MongoDB + EJS. Server-side rendering.
 
 # Dependencies used so far:
 
