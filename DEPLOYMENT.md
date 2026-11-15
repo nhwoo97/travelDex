@@ -15,7 +15,7 @@ Before creating a new database, check the MongoDB Atlas account used by the old 
 - Mapbox: create a public `pk.` token at https://account.mapbox.com/access-tokens/. Restrict its allowed URLs to the Render domain after deployment. Never put a secret `sk.` token in browser code.
 
 ## 4. Deploy on Render
-1. Review and merge the `deployment-ready` pull request, or select that branch directly when creating the service.
+1. Review the `deployment-ready` pull request before merging.
 2. Sign in at https://render.com/ and select New > Web Service.
 3. Connect GitHub and choose `nhwoo97/travelDex`.
 4. Select branch `deployment-ready` (or `main` after merging).
@@ -37,7 +37,17 @@ Before creating a new database, check the MongoDB Atlas account used by the old 
 8. Visit `https://YOUR-SERVICE.onrender.com/health`. Expected response: `{"status":"ok"}`.
 9. Test registration, login/logout, location creation/edit/deletion, map display, image uploads, and reviews.
 
-## 5. After deployment
+## 5. Generate and commit a fresh lockfile (recommended)
+The repository's old lockfile was removed because it pinned the vulnerable 2021 dependency tree. On a local clone of this branch, run:
+```sh
+npm install
+npm run check
+npm test
+npm audit --omit=dev
+```
+This creates a new `package-lock.json` from the updated package manifest. Review the audit output, then commit and push the generated lockfile before relying on repeatable future builds. Once committed, change the Render build command to `npm ci && npm run check && npm test`.
+
+## 6. After deployment
 1. Add your final Render domain to Mapbox token URL restrictions.
 2. Confirm Atlas Network Access permits the Render service.
 3. Keep secrets only in Render environment variables, never in Git.
@@ -50,7 +60,6 @@ Before creating a new database, check the MongoDB Atlas account used by the old 
 - Blank map: verify Mapbox public token and URL restrictions.
 - Upload failure: verify Cloudinary credentials and usage.
 - Login not persisting: check session secret, HTTPS, and MongoDB session collection.
-- Build failure: inspect the first npm error in Render logs. Use `npm install` to refresh the old lockfile; do not use `npm ci` until a regenerated lockfile is committed.
 
 ## Sample data
 The seed script deletes existing campground records. It refuses to run unless `ALLOW_DESTRUCTIVE_SEED=true` is explicitly set and uses the first registered user as the sample author. Do not run it against a database with data to preserve.
