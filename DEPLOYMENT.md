@@ -14,7 +14,7 @@ This guide deploys the Express/EJS application from the `main` branch. Do not us
 If the old cluster is unavailable or you deliberately want a fresh database:
 
 1. Open https://cloud.mongodb.com/ and select your project.
-2. Create a Free cluster (M0) if needed. Choose AWS and the Oregon (`us-west-2`) region to match the Render region used by this Blueprint.
+2. Create a Free cluster (M0) if needed. Choose a cloud provider and region close to the Render region you select. The current Blueprint does not pin a Render region, so choose the Render region first, then select a nearby Atlas region where possible.
 3. Create a **database user** (this is different from your Atlas website login). Give it read/write access to the intended application database, use a strong unique password, and save the credentials privately.
 4. Open Network Access / IP Access List. Render documents its regional outbound IP ranges; after Render creates the service, open the service's **Connect → Outbound** panel and add those CIDR ranges to Atlas. If you need to get the first deployment running before you can copy the ranges, you can temporarily allow `0.0.0.0/0`, then replace that rule with the Render outbound ranges as soon as the service is created. Keep database authentication enabled and use a strong password.
 5. On the cluster, select Connect → Drivers (or Connect your application), choose Node.js, and copy the connection URI.
