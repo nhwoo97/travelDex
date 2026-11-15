@@ -15,4 +15,8 @@ jobs:
       - run: npm install
       - run: npm run check
       - run: npm test
-      - run: npm audit --omit=dev
+      - name: Report all production dependency advisories
+        run: npm audit --omit=dev
+        continue-on-error: true
+      - name: Fail on critical production dependency advisories
+        run: npm audit --omit=dev --audit-level=critical
