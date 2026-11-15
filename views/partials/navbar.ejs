@@ -1,17 +1,7 @@
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">TravelDex</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNavAltMarkup"
-      aria-controls="navbarNavAltMarkup"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <a class="navbar-brand" href="/">TravelDex</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-link" href="/">Home</a>
@@ -19,11 +9,11 @@
         <a class="nav-link" href="/campgrounds/new">New Entry</a>
       </div>
       <div class="navbar-nav ms-auto">
-        <% if(!currentUser) {%>
-        <a href="/login" class="nav-link">Log In</a>
-        <a href="/register" class="nav-link">Register</a>
-        <% }else { %>
-        <a href="/logout" class="nav-link">Log Out</a>
+        <% if (!currentUser) { %>
+          <a href="/login" class="nav-link">Log In</a>
+          <a href="/register" class="nav-link">Register</a>
+        <% } else { %>
+          <form action="/logout" method="POST" class="d-inline"><button type="submit" class="nav-link btn btn-link">Log Out</button></form>
         <% } %>
       </div>
     </div>

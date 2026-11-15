@@ -1,57 +1,31 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const cities = require("./cities");
 const { places, descriptors } = require("./seedHelpers");
 const Campground = require("../models/campground");
-
-mongoose.connect("mongodb://localhost:27017/yelp-camp", {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-});
-
-const db = mongoose.connection;
-
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-  console.log("Database connected");
-});
-
-const sample = (array) => array[Math.floor(Math.random() * array.length)];
-
-const seedDB = async () => {
+if (!process.env.DB_URL) throw new Error("Set DB_URL before running the seed script.");
+if (process.env.ALLOW_DESTRUCTIVE_SEED !== "true") throw new Error("Seeding deletes existing campground records. Set ALLOW_DESTRUCTIVE_SEED=true only if you intentionally want to replace them.");
+const sample = array => array[Math.floor(Math.random() * array.length)];
+async function seedDB() {
+  await mongoose.connect(process.env.DB_URL);
   await Campground.deleteMany({});
+  const User = require("../models/user");
+  const author = await User.findOne();
+  if (!author) throw new Error("Create a user account before seeding campgrounds.");
+  const records = [];
   for (let i = 0; i < 100; i++) {
-    const random1000 = Math.floor(Math.random() * 1000);
-    const price = Math.floor(Math.random() * 20) + 10;
-    const camp = new Campground({
-      author: "616deba268d21239fb0cd7d8",
-      location: `${cities[random1000].city}, ${cities[random1000].state}`,
+    const city = cities[Math.floor(Math.random() * cities.length)];
+    records.push({
+      author: author._id,
+      location: `${city.city}, ${city.state}`,
       title: `${sample(descriptors)} ${sample(places)}`,
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores vero perferendis laudantium, consequuntur voluptatibus nulla architecto, sit soluta esse iure sed labore ipsam a cum nihil atque molestiae deserunt!",
-      price,
-      geometry: {
-        type: "Point",
-        coordinates: [
-          cities[random1000].longitude,
-          cities[random1000].latitude,
-        ],
-      },
-      images: [
-        {
-          url: "https://res.cloudinary.com/dsjcc2x9c/image/upload/v1636050772/YelpCamp/pzj9y72grt3wqxrheocl.jpg",
-          filename: "YelpCamp/pzj9y72grt3wqxrheocl",
-        },
-        {
-          url: "https://res.cloudinary.com/dsjcc2x9c/image/upload/v1636050778/YelpCamp/ni1p4a5rkhovc7eggvot.jpg",
-          filename: "YelpCamp/ni1p4a5rkhovc7eggvot",
-        },
-      ],
+      description: "A sample travel destination. Add details about this location.",
+      price: Math.floor(Math.random() * 20) + 10,
+      geometry: { type: "Point", coordinates: [Number(city.longitude), Number(city.latitude)] },
+      images: [],
     });
-    await camp.save();
   }
-};
-
-seedDB().then(() => {
-  mongoose.connection.close();
-});
+  await Campground.insertMany(records);
+  console.log(`Inserted ${records.length} sample locations.`);
+}
+seedDB().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => { await mongoose.disconnect(); });

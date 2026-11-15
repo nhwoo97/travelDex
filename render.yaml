@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: traveldex
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run check && npm test
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_KEY
+        sync: false
+      - key: CLOUDINARY_SECRET
+        sync: false
+      - key: MAPBOX_TOKEN
+        sync: false

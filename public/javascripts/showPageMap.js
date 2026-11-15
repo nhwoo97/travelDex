@@ -1,18 +1,13 @@
-mapboxgl.accessToken = mapToken;
-const map = new mapboxgl.Map({
-  container: "map", // container ID
-  style: "mapbox://styles/mapbox/light-v10", // style URL
-  center: campgroundData.geometry.coordinates, // starting position [lng, lat]
-  zoom: 10, // starting zoom
-});
-
-map.addControl(new mapboxgl.NavigationControl());
-
-new mapboxgl.Marker()
-  .setLngLat(campgroundData.geometry.coordinates)
-  .setPopup(
-    new mapboxgl.Popup({ offset: 25 }).setHTML(
-      `<h3>${campgroundData.title}</h3><p>${campgroundData.location}</p>`
-    )
-  )
-  .addTo(map);
+if (mapToken && campgroundData.geometry && document.getElementById("map")) {
+  mapboxgl.accessToken = mapToken;
+  const coordinates = campgroundData.geometry.coordinates;
+  const map = new mapboxgl.Map({ container: "map", style: "mapbox://styles/mapbox/light-v11", center: coordinates, zoom: 10 });
+  map.addControl(new mapboxgl.NavigationControl());
+  const content = document.createElement("div");
+  const heading = document.createElement("strong");
+  heading.textContent = campgroundData.title;
+  const location = document.createElement("p");
+  location.textContent = campgroundData.location;
+  content.append(heading, location);
+  new mapboxgl.Marker().setLngLat(coordinates).setPopup(new mapboxgl.Popup({ offset: 25 }).setDOMContent(content)).addTo(map);
+}
