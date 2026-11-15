@@ -3,7 +3,7 @@ services:
     name: traveldex
     runtime: node
     plan: free
-    buildCommand: npm install && npm run check && npm test && npm audit --omit=dev --audit-level=high
+    buildCommand: npm install && npm run check && npm test && npm audit --omit=dev --audit-level=moderate
     startCommand: npm start
     healthCheckPath: /health
     envVars:
