@@ -1,5 +1,5 @@
 <%# Shared fields for new/edit place forms. Locals: place (optional) %>
-<% const current = locals.place || {}; const visited = current.visitedOn ? new Date(current.visitedOn).toISOString().slice(0, 10) : ""; %>
+<% const current = (typeof place !== "undefined" && place) || {}; const visited = current.visitedOn ? new Date(current.visitedOn).toISOString().slice(0, 10) : ""; %>
 <div class="mb-3">
   <label class="form-label" for="title">Name</label>
   <input class="form-control" id="title" name="campground[title]" value="<%= current.title || "" %>" maxlength="100" placeholder="e.g. Sunset at Ocean Beach" required />

@@ -1,4 +1,4 @@
-<% const path = locals.currentPath || ""; %>
+<% const path = (typeof currentPath === "string" ? currentPath : ""); %>
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand fw-bold" href="/">TravelDex</a>
