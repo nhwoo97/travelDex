@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= locals.pageTitle ? `${pageTitle} · TravelDex` : "TravelDex" %></title>
+    <title><%= typeof pageTitle !== "undefined" && pageTitle ? `${pageTitle} · TravelDex` : "TravelDex" %></title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -14,10 +14,10 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" rel="stylesheet" />
     <link rel="stylesheet" href="/stylesheets/app.css" />
   </head>
-  <body class="d-flex flex-column min-vh-100 <%= locals.bodyClass || "" %>">
+  <body class="d-flex flex-column min-vh-100 <%= typeof bodyClass !== "undefined" ? bodyClass : "" %>">
     <%- include('../partials/navbar') %>
-    <main class="<%= locals.fullWidth ? "" : "container" %> mt-4 flex-grow-1">
-      <div class="<%= locals.fullWidth ? "container" : "" %>"><%- include('../partials/flash') %></div>
+    <main class="<%= typeof fullWidth !== "undefined" && fullWidth ? "" : "container" %> mt-4 flex-grow-1">
+      <div class="<%= typeof fullWidth !== "undefined" && fullWidth ? "container" : "" %>"><%- include('../partials/flash') %></div>
       <%- body %>
     </main>
     <%- include('../partials/footer') %>
