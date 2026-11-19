@@ -1,0 +1,9 @@
+<%# Fractional star rating. Locals: rating (0-5), count (optional) %>
+<% const safeRating = Math.max(0, Math.min(5, Number(rating) || 0)); %>
+<span class="star-rating" title="<%= safeRating.toFixed(1) %> out of 5">
+  <span class="stars" aria-hidden="true"><span class="stars-fill" style="width: <%= (safeRating / 5) * 100 %>%"></span></span>
+  <% if (typeof count !== "undefined") { %>
+    <span class="star-text"><% if (count > 0) { %><strong><%= safeRating.toFixed(1) %></strong> (<%= count %>)<% } else { %>No reviews yet<% } %></span>
+  <% } %>
+  <span class="visually-hidden"><%= safeRating.toFixed(1) %> out of 5 stars</span>
+</span>

@@ -1,15 +1,16 @@
 <% layout('layouts/boilerplate') %>
 <div class="row">
-  <h1 class="text-center">New Entry</h1>
-  <div class="col-md-6 offset-md-3">
-    <form action="/campgrounds" method="POST" novalidate class="validated-form" enctype="multipart/form-data">
-      <div class="mb-3"><label class="form-label" for="title">Title</label><input class="form-control" id="title" name="campground[title]" maxlength="100" required /></div>
-      <div class="mb-3"><label class="form-label" for="location">Location</label><input class="form-control" id="location" name="campground[location]" maxlength="200" required /></div>
-      <div class="mb-3"><label class="form-label" for="price">Price</label><div class="input-group"><span class="input-group-text">$</span><input type="number" min="0" step="0.01" class="form-control" id="price" name="campground[price]" required /></div></div>
-      <div class="mb-3"><label class="form-label" for="description">Description</label><textarea class="form-control" id="description" name="campground[description]" maxlength="5000" required></textarea></div>
-      <div class="mb-3"><label class="form-label" for="image">Images (JPEG, PNG, WebP; up to 8 files, 5 MB each)</label><input type="file" class="form-control" id="image" name="image" accept="image/jpeg,image/png,image/webp" multiple /></div>
-      <button class="btn btn-success">Add Location</button>
+  <div class="col-lg-7 col-xl-6 mx-auto">
+    <h1 class="mb-4">Add a place</h1>
+    <form action="/places" method="POST" novalidate class="validated-form" enctype="multipart/form-data">
+      <%- include('../partials/placeFields', { place: null }) %>
+      <div class="mb-4">
+        <label class="form-label" for="image">Photos</label>
+        <input type="file" class="form-control" id="image" name="image" accept="image/jpeg,image/png,image/webp" multiple />
+        <div class="form-text">JPEG, PNG or WebP · up to 8 photos, 5 MB each. The first photo is the cover.</div>
+      </div>
+      <button class="btn btn-success">Add place</button>
+      <a class="btn btn-link" href="/places">Cancel</a>
     </form>
-    <a href="/campgrounds">All Locations</a>
   </div>
 </div>

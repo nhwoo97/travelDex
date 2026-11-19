@@ -1,22 +1,29 @@
 <% layout('layouts/boilerplate') %>
 <div class="row">
-  <h1 class="text-center">Edit Entry</h1>
-  <div class="col-md-6 offset-md-3">
-    <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST" novalidate class="validated-form" enctype="multipart/form-data">
-      <div class="mb-3"><label class="form-label" for="title">Title</label><input class="form-control" id="title" name="campground[title]" value="<%= campground.title %>" maxlength="100" required /></div>
-      <div class="mb-3"><label class="form-label" for="location">Location</label><input class="form-control" id="location" name="campground[location]" value="<%= campground.location %>" maxlength="200" required /></div>
-      <div class="mb-3"><label class="form-label" for="price">Price</label><input type="number" min="0" step="0.01" class="form-control" id="price" name="campground[price]" value="<%= campground.price %>" required /></div>
-      <div class="mb-3"><label class="form-label" for="description">Description</label><textarea class="form-control" id="description" name="campground[description]" maxlength="5000" required><%= campground.description %></textarea></div>
-      <div class="mb-3"><label class="form-label" for="image">Add images (JPEG, PNG, WebP; up to 8 files, 5 MB each)</label><input type="file" class="form-control" id="image" name="image" accept="image/jpeg,image/png,image/webp" multiple /></div>
+  <div class="col-lg-7 col-xl-6 mx-auto">
+    <h1 class="mb-4">Edit place</h1>
+    <form action="/places/<%= campground._id %>?_method=PUT" method="POST" novalidate class="validated-form" enctype="multipart/form-data">
+      <%- include('../partials/placeFields', { place: campground }) %>
       <div class="mb-3">
-        <% campground.images.forEach((img, i) => { %>
-          <img src="<%= img.thumbnail %>" class="img-thumbnail" alt="Current location image" />
-          <div class="form-check-inline"><input type="checkbox" id="image-<%= i %>" name="deleteImages[]" value="<%= img.filename %>" /></div>
-          <label for="image-<%= i %>">Delete?</label>
-        <% }) %>
+        <label class="form-label" for="image">Add photos</label>
+        <input type="file" class="form-control" id="image" name="image" accept="image/jpeg,image/png,image/webp" multiple />
+        <div class="form-text">JPEG, PNG or WebP · up to 8 photos, 5 MB each.</div>
       </div>
-      <button class="btn btn-info">Update Location</button>
+      <% if (campground.images.length) { %>
+        <fieldset class="mb-4">
+          <legend class="form-label fs-6">Current photos — tick any to delete</legend>
+          <div class="d-flex flex-wrap gap-3">
+            <% campground.images.forEach((img, i) => { %>
+              <label class="photo-delete" for="image-<%= i %>">
+                <img src="<%= imageUrl(img, "c_fill,w_160,h_120") %>" class="img-thumbnail" alt="Photo <%= i + 1 %>" />
+                <span class="form-check mt-1"><input class="form-check-input" type="checkbox" id="image-<%= i %>" name="deleteImages[]" value="<%= img.filename %>" /> <span class="small">Delete</span></span>
+              </label>
+            <% }) %>
+          </div>
+        </fieldset>
+      <% } %>
+      <button class="btn btn-primary">Save changes</button>
+      <a class="btn btn-link" href="/places/<%= campground._id %>">Cancel</a>
     </form>
-    <a href="/campgrounds/<%= campground._id %>">Back To Location</a>
   </div>
 </div>

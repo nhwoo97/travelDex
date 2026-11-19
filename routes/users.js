@@ -6,4 +6,5 @@ const users = require("../controllers/users");
 router.route("/register").get(users.renderRegister).post(catchAsync(users.register));
 router.route("/login").get(users.renderLogin).post(passport.authenticate("local", { failureFlash: true, failureRedirect: "/login", keepSessionInfo: true }), users.login);
 router.post("/logout", users.logout);
+router.get("/users/:username", catchAsync(users.showProfile));
 module.exports = router;

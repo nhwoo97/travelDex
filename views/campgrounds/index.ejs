@@ -1,28 +1,84 @@
 <% layout('layouts/boilerplate') %>
-<link rel="stylesheet" href="/stylesheets/index.css" />
-<div id="map" class="bigMap"></div>
-<h1>All Locations</h1>
-<% for (const campground of campgrounds) { %>
-  <div class="card mb-4"><div class="row">
-    <div class="col-md-4">
-      <% if (campground.images.length) { %><img class="img-fluid" src="<%= campground.images[0].url %>" alt="<%= campground.title %>" /><% } %>
+<div class="container-fluid px-lg-4">
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h2 mb-0">Places</h1>
+      <p class="text-muted mb-0">
+        <%= total %> <%= total === 1 ? "place" : "places" %><% if (options.q) { %> matching “<%= options.q %>”<% } %><% if (options.category) { %> in <%= getCategory(options.category).label %><% } %><% if (options.minRating) { %> rated <%= options.minRating %>+ stars<% } %>
+      </p>
     </div>
-    <div class="col-md-8"><div class="card-body">
-      <h5 class="card-title"><%= campground.title %></h5>
-      <p class="card-text"><%= campground.description %></p>
-      <p class="card-text"><small class="text-muted"><%= campground.location %></small></p>
-      <a class="btn btn-primary" href="/campgrounds/<%= campground._id %>">View <%= campground.title %></a>
-    </div></div>
-  </div></div>
-<% } %>
+    <a class="btn btn-success" href="/places/new">+ Add a place</a>
+  </div>
+
+  <form class="row g-2 align-items-end filter-bar mb-3" action="/places" method="GET" role="search">
+    <div class="col-12 col-md-4">
+      <label class="form-label small mb-1" for="filter-q">Search</label>
+      <input class="form-control" id="filter-q" type="search" name="q" value="<%= options.q %>" placeholder="Name, city or tag" maxlength="100" />
+    </div>
+    <div class="col-6 col-md-3">
+      <label class="form-label small mb-1" for="filter-category">Category</label>
+      <select class="form-select" id="filter-category" name="category">
+        <option value="">All categories</option>
+        <% for (const category of CATEGORIES) { %>
+          <option value="<%= category.key %>" <%= options.category === category.key ? "selected" : "" %>><%= category.icon %> <%= category.label %></option>
+        <% } %>
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label small mb-1" for="filter-rating">Rating</label>
+      <select class="form-select" id="filter-rating" name="minRating">
+        <option value="">Any</option>
+        <% for (const stars of [4, 3, 2, 1]) { %>
+          <option value="<%= stars %>" <%= options.minRating === stars ? "selected" : "" %>><%= stars %>+ stars</option>
+        <% } %>
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label small mb-1" for="filter-sort">Sort by</label>
+      <select class="form-select" id="filter-sort" name="sort">
+        <% for (const [key, sort] of Object.entries(SORTS)) { %>
+          <option value="<%= key %>" <%= options.sort === key ? "selected" : "" %>><%= sort.label %></option>
+        <% } %>
+      </select>
+    </div>
+    <div class="col-6 col-md-1 d-grid">
+      <button class="btn btn-primary" type="submit">Go</button>
+    </div>
+    <% if (options.q || options.category || options.minRating || options.sort !== "newest") { %>
+      <div class="col-12"><a class="small" href="/places">Clear filters</a></div>
+    <% } %>
+  </form>
+
+  <button class="btn btn-outline-secondary btn-sm d-lg-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#mapPanel" aria-expanded="false" aria-controls="mapPanel">Show / hide map</button>
+
+  <div class="row g-4">
+    <div class="col-lg-7 order-2 order-lg-1">
+      <% if (!places.length) { %>
+        <div class="empty-state text-center p-5 border rounded">
+          <p class="h5">No places found.</p>
+          <p class="text-muted">Try a different search or <a href="/places">clear the filters</a> — or be the first to <a href="/places/new">add one</a>.</p>
+        </div>
+      <% } else { %>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-xxl-3 g-3" id="placeList">
+          <% for (const place of places) { %>
+            <div class="col"><%- include('../partials/placeCard', { place }) %></div>
+          <% } %>
+        </div>
+        <%- include('../partials/pagination', { options, totalPages }) %>
+      <% } %>
+    </div>
+    <div class="col-lg-5 order-1 order-lg-2">
+      <div id="mapPanel" class="collapse d-lg-block">
+        <div class="map-sticky">
+          <div id="map" class="listing-map rounded shadow-sm"></div>
+          <% if (!mapToken) { %><p class="small text-muted mt-2">Map unavailable: no Mapbox token configured.</p><% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
-  const mapToken = <%- JSON.stringify(mapToken).replace(/</g, "\\u003c") %>;
-  const campgroundsData = <%- JSON.stringify({
-    type: "FeatureCollection",
-    features: campgrounds.filter(c => c.geometry && c.geometry.coordinates).map(c => ({
-      type: "Feature", geometry: c.geometry,
-      properties: { title: c.title, description: c.description.slice(0, 120), url: `/campgrounds/${c._id}` }
-    }))
-  }).replace(/</g, "\\u003c") %>;
+  const mapToken = <%- jsonForScript(mapToken) %>;
+  const placesData = <%- jsonForScript(mapData) %>;
 </script>
 <script src="/javascripts/clusterMap.js"></script>
