@@ -6,7 +6,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "node --test",
+    "test": "node --test --test-force-exit",
     "check": "node scripts/check-syntax.js",
     "seed": "node seeds/index.js"
   },

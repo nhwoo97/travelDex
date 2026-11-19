@@ -3,7 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
+// connect-mongo v6 exposes MongoStore as a named export in CommonJS.
+const { MongoStore } = require("connect-mongo");
 const flash = require("connect-flash");
 const path = require("path");
 const methodOverride = require("method-override");
@@ -43,7 +44,8 @@ app.use(mongoSanitize());
 app.use(session({
   name: "traveldex.sid",
   secret: process.env.SESSION_SECRET,
-  store: MongoStore.create({ mongoUrl: process.env.DB_URL, collectionName: "sessions", ttl: 604800, autoRemove: "native" }),
+  // Reuse Mongoose's connection so the app opens one connection pool instead of two.
+  store: MongoStore.create({ clientPromise: mongoose.connection.asPromise().then(connection => connection.getClient()), collectionName: "sessions", ttl: 604800, autoRemove: "native" }),
   resave: false,
   saveUninitialized: false,
   cookie: { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 604800000 },

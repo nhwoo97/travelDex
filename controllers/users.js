@@ -4,6 +4,7 @@ module.exports.register = async (req, res, next) => {
     const { email, username, password } = req.body;
     const User = require("../models/user");
     const user = new User({ email, username });
+    if (!password || password.length < 8) throw new Error("Password must be at least 8 characters.");
     const registeredUser = await User.register(user, password);
     req.login(registeredUser, (error) => {
       if (error) return next(error);
@@ -11,7 +12,10 @@ module.exports.register = async (req, res, next) => {
       res.redirect("/campgrounds");
     });
   } catch (error) {
-    req.flash("error", error.message);
+    const message = error && error.code === 11000 && error.keyPattern && error.keyPattern.email
+      ? "An account with that email already exists."
+      : error.message;
+    req.flash("error", message);
     res.redirect("/register");
   }
 };
