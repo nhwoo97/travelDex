@@ -54,7 +54,7 @@
   </div>
 </div>
 <script>
-  const mapToken = <%- JSON.stringify(mapToken) %>;
-  const campgroundData = <%- JSON.stringify({ title: campground.title, location: campground.location, geometry: campground.geometry }) %>;
+  const mapToken = <%- JSON.stringify(mapToken).replace(/</g, "\\u003c") %>;
+  const campgroundData = <%- JSON.stringify({ title: campground.title, location: campground.location, geometry: campground.geometry }).replace(/</g, "\\u003c") %>;
 </script>
 <script src="/javascripts/showPageMap.js"></script>

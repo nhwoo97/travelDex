@@ -3,7 +3,7 @@ const ExpressError = require("./utils/ExpressError");
 const Campground = require("./models/campground");
 const Review = require("./models/review");
 module.exports.isLoggedIn = (req, res, next) => {
-  if (!req.isAuthenticated()) { req.session.returnTo = req.originalUrl; req.flash("error", "You must be signed in."); return res.redirect("/login"); }
+  if (!req.isAuthenticated()) { if (req.method === "GET") req.session.returnTo = req.originalUrl; req.flash("error", "You must be signed in."); return res.redirect("/login"); }
   next();
 };
 module.exports.validateCampground = (req, res, next) => {

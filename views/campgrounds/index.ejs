@@ -16,13 +16,13 @@
   </div></div>
 <% } %>
 <script>
-  const mapToken = <%- JSON.stringify(mapToken) %>;
+  const mapToken = <%- JSON.stringify(mapToken).replace(/</g, "\\u003c") %>;
   const campgroundsData = <%- JSON.stringify({
     type: "FeatureCollection",
     features: campgrounds.filter(c => c.geometry && c.geometry.coordinates).map(c => ({
       type: "Feature", geometry: c.geometry,
       properties: { title: c.title, description: c.description.slice(0, 120), url: `/campgrounds/${c._id}` }
     }))
-  }) %>;
+  }).replace(/</g, "\\u003c") %>;
 </script>
 <script src="/javascripts/clusterMap.js"></script>
