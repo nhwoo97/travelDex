@@ -28,6 +28,9 @@ for (const name of ["DB_URL", "SESSION_SECRET"]) {
 if (process.env.NODE_ENV === "production" && process.env.SESSION_SECRET.length < 32) {
   throw new Error("SESSION_SECRET must be at least 32 characters in production.");
 }
+// Resolved by start() once Mongoose has connected; the session store waits on it.
+let resolveDatabaseClient;
+const databaseClient = new Promise(resolve => { resolveDatabaseClient = resolve; });
 const app = express();
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
@@ -50,7 +53,7 @@ app.use(session({
   name: "traveldex.sid",
   secret: process.env.SESSION_SECRET,
   // Reuse Mongoose's connection so the app opens one connection pool instead of two.
-  store: MongoStore.create({ clientPromise: mongoose.connection.asPromise().then(connection => connection.getClient()), collectionName: "sessions", ttl: 604800, autoRemove: "native" }),
+  store: MongoStore.create({ clientPromise: databaseClient, collectionName: "sessions", ttl: 604800, autoRemove: "native" }),
   resave: false,
   saveUninitialized: false,
   cookie: { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 604800000 },
@@ -94,6 +97,7 @@ app.use((err, req, res, next) => {
 const port = process.env.PORT || 3000;
 async function start() {
   await mongoose.connect(process.env.DB_URL, { serverSelectionTimeoutMS: 10000 });
+  resolveDatabaseClient(mongoose.connection.getClient());
   console.log("Connected to MongoDB");
   try {
     const result = await backfill();
