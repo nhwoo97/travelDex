@@ -1,11 +1,9 @@
 <% layout('layouts/boilerplate') %>
 <div class="row">
-  <div class="col-6 offset-3">
-    <div class="alert alert-danger" role="alert">
-      <h4 class="alert-heading"><%= err.message %></h4>
-      <% if (process.env.NODE_ENV !== "production") {%>
-      <p><%= err.stack %></p>
-      <% } %>
-    </div>
+  <div class="col-md-8 col-lg-6 mx-auto text-center py-5">
+    <p class="display-4 fw-bold text-muted mb-0"><%= err.statusCode %></p>
+    <h1 class="h3 mb-3"><%= err.message %></h1>
+    <a class="btn btn-primary" href="/places">Browse places</a>
+    <a class="btn btn-link" href="/">Go home</a>
   </div>
 </div>

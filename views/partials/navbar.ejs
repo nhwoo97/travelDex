@@ -1,18 +1,23 @@
+<% const path = locals.currentPath || ""; %>
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">TravelDex</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <a class="navbar-brand fw-bold" href="/">TravelDex</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="mainNav">
       <div class="navbar-nav">
-        <a class="nav-link" href="/">Home</a>
-        <a class="nav-link" href="/campgrounds">Locations</a>
-        <a class="nav-link" href="/campgrounds/new">New Entry</a>
+        <a class="nav-link <%= path === "/" ? "active" : "" %>" href="/">Home</a>
+        <a class="nav-link <%= path === "/places" ? "active" : "" %>" href="/places">Places</a>
+        <a class="nav-link <%= path === "/places/new" ? "active" : "" %>" href="/places/new">Add a place</a>
       </div>
+      <form class="d-flex ms-lg-3 my-2 my-lg-0 nav-search" action="/places" method="GET" role="search">
+        <input class="form-control form-control-sm" type="search" name="q" placeholder="Search places, cities, tags" aria-label="Search places" maxlength="100" />
+      </form>
       <div class="navbar-nav ms-auto">
         <% if (!currentUser) { %>
-          <a href="/login" class="nav-link">Log In</a>
-          <a href="/register" class="nav-link">Register</a>
+          <a href="/login" class="nav-link <%= path === "/login" ? "active" : "" %>">Log In</a>
+          <a href="/register" class="nav-link <%= path === "/register" ? "active" : "" %>">Register</a>
         <% } else { %>
+          <a href="<%= profileUrl(currentUser) %>" class="nav-link <%= path === profileUrl(currentUser) ? "active" : "" %>">My Page (<%= currentUser.username %>)</a>
           <form action="/logout" method="POST" class="d-inline"><button type="submit" class="nav-link btn btn-link">Log Out</button></form>
         <% } %>
       </div>

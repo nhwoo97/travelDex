@@ -1,0 +1,36 @@
+<%# Shared fields for new/edit place forms. Locals: place (optional) %>
+<% const current = locals.place || {}; const visited = current.visitedOn ? new Date(current.visitedOn).toISOString().slice(0, 10) : ""; %>
+<div class="mb-3">
+  <label class="form-label" for="title">Name</label>
+  <input class="form-control" id="title" name="campground[title]" value="<%= current.title || "" %>" maxlength="100" placeholder="e.g. Sunset at Ocean Beach" required />
+  <div class="invalid-feedback">Give the place a name.</div>
+</div>
+<div class="mb-3">
+  <label class="form-label" for="location">Location</label>
+  <input class="form-control" id="location" name="campground[location]" value="<%= current.location || "" %>" maxlength="200" placeholder="City, state or address" required />
+  <div class="form-text">Used to place it on the map, so be as specific as you like.</div>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-sm-6">
+    <label class="form-label" for="category">Category</label>
+    <select class="form-select" id="category" name="campground[category]" required>
+      <% for (const category of CATEGORIES) { %>
+        <option value="<%= category.key %>" <%= (current.category || "other") === category.key ? "selected" : "" %>><%= category.icon %> <%= category.label %></option>
+      <% } %>
+    </select>
+  </div>
+  <div class="col-sm-6">
+    <label class="form-label" for="visitedOn">Date visited <span class="text-muted">(optional)</span></label>
+    <input class="form-control" type="date" id="visitedOn" name="campground[visitedOn]" value="<%= visited %>" max="<%= new Date().toISOString().slice(0, 10) %>" />
+  </div>
+</div>
+<div class="mb-3">
+  <label class="form-label" for="tags">Tags <span class="text-muted">(optional)</span></label>
+  <input class="form-control" id="tags" name="campground[tags]" value="<%= (current.tags || []).join(", ") %>" maxlength="400" placeholder="ramen, late night, cheap eats" />
+  <div class="form-text">Separate with commas, up to 10. Tags are searchable.</div>
+</div>
+<div class="mb-3">
+  <label class="form-label" for="description">Description</label>
+  <textarea class="form-control" id="description" name="campground[description]" rows="5" maxlength="5000" required><%= current.description || "" %></textarea>
+  <div class="invalid-feedback">Tell people a little about it.</div>
+</div>

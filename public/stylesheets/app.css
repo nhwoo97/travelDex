@@ -1,9 +1,70 @@
-.bigMap {
-  width: 100%;
-  height: 500px;
+:root {
+  --td-accent: #0d6efd;
+  --td-star: #f5b301;
+  --td-muted-bg: #f3f5f7;
 }
 
-.smallMap {
-  width: 100%;
-  height: 300px;
+/* Navbar search */
+.nav-search { max-width: 280px; }
+.navbar .btn-link.nav-link { text-decoration: none; }
+
+/* Place cards */
+.place-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.place-card:hover { transform: translateY(-2px); box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.12) !important; }
+.place-card-image { aspect-ratio: 3 / 2; object-fit: cover; width: 100%; }
+.place-card-placeholder {
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #dfe9f3 0%, #f6f9fc 100%);
+  font-size: 2.5rem;
 }
+.place-card .card-title a { color: inherit; text-decoration: none; }
+.place-card .card-title a:hover { text-decoration: underline; }
+.category-badge { background: var(--td-muted-bg); color: #333; font-weight: 500; }
+
+/* Fractional stars: grey row with a gold row clipped on top */
+.star-rating { display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; font-size: 0.9rem; }
+.stars { position: relative; display: inline-block; color: #ccc; letter-spacing: 1px; line-height: 1; }
+.stars::before { content: "★★★★★"; }
+.stars-fill { position: absolute; top: 0; left: 0; overflow: hidden; color: var(--td-star); white-space: nowrap; }
+.stars-fill::before { content: "★★★★★"; }
+.star-text { color: #555; }
+
+/* Places page */
+.filter-bar { background: var(--td-muted-bg); padding: 0.75rem; border-radius: 0.5rem; margin-left: 0; margin-right: 0; }
+.listing-map { width: 100%; height: 360px; }
+@media (min-width: 992px) {
+  .map-sticky { position: sticky; top: 72px; }
+  .listing-map { height: calc(100vh - 96px); min-height: 420px; }
+}
+
+/* Place page */
+.place-hero .carousel-item img { height: clamp(260px, 55vh, 560px); object-fit: cover; }
+.place-description { white-space: pre-line; font-size: 1.05rem; }
+.place-map { width: 100%; height: 320px; }
+.photo-delete { cursor: pointer; text-align: center; }
+
+/* Profile */
+.avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #4facfe, #00c6a7); color: #fff;
+  font-size: 2rem; font-weight: 700;
+}
+.stat-tile { background: var(--td-muted-bg); border-radius: 0.5rem; padding: 1rem; text-align: center; height: 100%; }
+.stat-value { font-size: 1.75rem; font-weight: 700; line-height: 1.1; }
+.stat-label { color: #666; font-size: 0.85rem; }
+.review-thumb { width: 96px; height: 72px; object-fit: cover; display: flex; align-items: center; justify-content: center; }
+
+/* Home */
+.home-hero {
+  margin-top: -1.5rem;
+  min-height: 60vh;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.55)),
+    url("https://res.cloudinary.com/dsjcc2x9c/image/upload/c_fill,w_1920,q_auto,f_auto/v1636399019/pexels-vincent-ma-janssen-1310788_l27upl.jpg");
+  background-size: cover;
+  background-position: center;
+  text-shadow: 0 0.05rem 0.2rem rgba(0, 0, 0, 0.5);
+}
+
+/* Auth cards */
+.auth-image { aspect-ratio: 16 / 9; object-fit: cover; }

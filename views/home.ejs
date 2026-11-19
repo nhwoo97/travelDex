@@ -1,68 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TravelDex</title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
-      integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="/stylesheets/home.css" />
-  </head>
-
-  <body class="d-flex text-center text-white bg-dark">
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-      <header class="mb-auto">
-        <div>
-          <h3 class="float-md-left mb-0">TravelDex</h3>
-          <nav class="nav nav-masthead justify-content-center float-md-right">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-            <a class="nav-link" href="/campgrounds">Locations</a>
-            <% if(!currentUser) { %>
-            <a class="nav-link" href="/login">Login</a>
-            <a class="nav-link" href="/register">Register</a>
-            <% } else { %>
-            <a class="nav-link" href="/logout">Logout</a>
-            <% } %>
-          </nav>
-        </div>
-      </header>
-      <main class="px-3">
-        <h1>TravelDex</h1>
-        <p class="lead">
-          Welcome to TravelDex! <br />
-          Jump right in and explore our many travel locations. <br />
-          Feel free to share some of your own and comment on others!
-        </p>
-        <a
-          href="/campgrounds"
-          class="
-            btn btn-lg btn-secondary
-            font-weight-bold
-            border-white
-            bg-white
-          "
-          >View Locations</a
-        >
-      </main>
-
-      <footer class="mt-auto text-white-50">
-        <p>&copy; 2021</p>
-      </footer>
+<% layout('layouts/boilerplate') %>
+<section class="home-hero text-white text-center d-flex align-items-center mb-5">
+  <div class="container py-5">
+    <h1 class="display-4 fw-bold">Find your next favorite place</h1>
+    <p class="lead mb-4">Real spots shared and reviewed by travelers<% if (placeCount) { %> · <%= placeCount %> <%= placeCount === 1 ? "place" : "places" %> and counting<% } %>.</p>
+    <form class="row g-2 justify-content-center" action="/places" method="GET" role="search">
+      <div class="col-12 col-md-6"><input class="form-control form-control-lg" type="search" name="q" placeholder="Try “tokyo”, “ramen” or “hike”" aria-label="Search places" maxlength="100" /></div>
+      <div class="col-12 col-md-auto d-grid"><button class="btn btn-light btn-lg" type="submit">Search</button></div>
+    </form>
+    <div class="mt-4 d-flex flex-wrap justify-content-center gap-2">
+      <% for (const category of CATEGORIES.filter(c => c.key !== "other")) { %>
+        <a class="btn btn-sm btn-outline-light rounded-pill" href="<%= listingUrl({ category: category.key }) %>"><%= category.icon %> <%= category.label %></a>
+      <% } %>
     </div>
+  </div>
+</section>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
-      integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"
-      crossorigin="anonymous"
-    ></script>
-  </body>
-</html>
+<div class="container">
+  <% if (topRated.length) { %>
+    <section class="mb-5">
+      <div class="d-flex justify-content-between align-items-baseline mb-3">
+        <h2 class="h3 mb-0">Top rated</h2>
+        <a href="<%= listingUrl({ sort: "top" }) %>">See all →</a>
+      </div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+        <% for (const place of topRated) { %><div class="col"><%- include('partials/placeCard', { place }) %></div><% } %>
+      </div>
+    </section>
+  <% } %>
+
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-baseline mb-3">
+      <h2 class="h3 mb-0">Recently added</h2>
+      <a href="/places">See all →</a>
+    </div>
+    <% if (recent.length) { %>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+        <% for (const place of recent) { %><div class="col"><%- include('partials/placeCard', { place }) %></div><% } %>
+      </div>
+    <% } else { %>
+      <p class="text-muted">No places yet. <a href="/places/new">Share the first one</a>.</p>
+    <% } %>
+  </section>
+
+  <% if (!currentUser) { %>
+    <section class="text-center p-5 bg-light rounded mb-4">
+      <h2 class="h4">Been somewhere worth sharing?</h2>
+      <p class="text-muted">Create a free account to add places, leave reviews and keep a want-to-go list.</p>
+      <a class="btn btn-success" href="/register">Join TravelDex</a>
+    </section>
+  <% } %>
+</div>

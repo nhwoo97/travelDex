@@ -12,7 +12,9 @@ const UserSchema = new Schema({
     trim: true,
     lowercase: true,
   },
-});
+  // "Want to go" list, shown on the user's public profile.
+  favorites: [{ type: Schema.Types.ObjectId, ref: "Campground" }],
+}, { timestamps: true });
 UserSchema.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model("User", UserSchema);

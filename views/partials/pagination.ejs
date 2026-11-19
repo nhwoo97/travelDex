@@ -1,0 +1,22 @@
+<%# Locals: options, totalPages %>
+<% if (totalPages > 1) {
+  const current = options.page;
+  const pages = [];
+  for (let n = 1; n <= totalPages; n++) {
+    if (n === 1 || n === totalPages || Math.abs(n - current) <= 2) pages.push(n);
+    else if (pages[pages.length - 1] !== "…") pages.push("…");
+  } %>
+  <nav aria-label="Places pages" class="mt-4">
+    <ul class="pagination justify-content-center flex-wrap">
+      <li class="page-item <%= current === 1 ? "disabled" : "" %>"><a class="page-link" href="<%= listingUrl(options, { page: current - 1 }) %>" aria-label="Previous page">‹</a></li>
+      <% for (const n of pages) { %>
+        <% if (n === "…") { %>
+          <li class="page-item disabled"><span class="page-link">…</span></li>
+        <% } else { %>
+          <li class="page-item <%= n === current ? "active" : "" %>"><a class="page-link" href="<%= listingUrl(options, { page: n }) %>" <%= n === current ? 'aria-current="page"' : "" %>><%= n %></a></li>
+        <% } %>
+      <% } %>
+      <li class="page-item <%= current === totalPages ? "disabled" : "" %>"><a class="page-link" href="<%= listingUrl(options, { page: current + 1 }) %>" aria-label="Next page">›</a></li>
+    </ul>
+  </nav>
+<% } %>

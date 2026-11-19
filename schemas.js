@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const sanitizeHtml = require("sanitize-html");
+const { CATEGORY_KEYS } = require("./utils/categories");
 const plainText = (value, helpers) => {
   const cleaned = sanitizeHtml(value, { allowedTags: [], allowedAttributes: {} });
   if (cleaned !== value) return helpers.error("string.escapeHTML");
@@ -9,9 +10,14 @@ const safeString = () => Joi.string().trim().custom(plainText).messages({ "strin
 module.exports.campgroundSchema = Joi.object({
   campground: Joi.object({
     title: safeString().max(100).required(),
-    price: Joi.number().min(0).required(),
     location: safeString().max(200).required(),
     description: safeString().max(5000).required(),
+    category: Joi.string().valid(...CATEGORY_KEYS).required(),
+    visitedOn: Joi.alternatives().try(
+      Joi.date().iso().min("1900-01-01").max("now"),
+      Joi.string().valid(""),
+    ).messages({ "date.max": "Visited date can't be in the future." }),
+    tags: safeString().max(400).allow(""),
   }).required(),
   deleteImages: Joi.alternatives().try(Joi.array().items(Joi.string()), Joi.string()),
 });

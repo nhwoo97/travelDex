@@ -1,0 +1,23 @@
+<%# Locals: place (with populated author when available) %>
+<% const category = getCategory(place.category); const cover = place.images && place.images[0]; %>
+<article class="card place-card h-100 shadow-sm" data-place-id="<%= place._id %>">
+  <a href="/places/<%= place._id %>" class="place-card-image-link" tabindex="-1" aria-hidden="true">
+    <% if (cover) { %>
+      <img class="card-img-top place-card-image" src="<%= imageUrl(cover, "c_fill,w_600,h_400,q_auto,f_auto") %>" alt="" loading="lazy" />
+    <% } else { %>
+      <div class="card-img-top place-card-image place-card-placeholder"><span><%= category.icon %></span></div>
+    <% } %>
+  </a>
+  <div class="card-body d-flex flex-column">
+    <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+      <span class="badge rounded-pill category-badge"><%= category.icon %> <%= category.label %></span>
+      <%- include('stars', { rating: place.avgRating, count: place.reviewCount }) %>
+    </div>
+    <h2 class="h5 card-title mb-1"><a class="stretched-link-title" href="/places/<%= place._id %>"><%= place.title %></a></h2>
+    <p class="text-muted small mb-2"><%= place.location %></p>
+    <p class="card-text small flex-grow-1"><%= place.description.length > 110 ? place.description.slice(0, 110) + "…" : place.description %></p>
+    <p class="small text-muted mb-0">
+      <% if (place.author && place.author.username) { %>by <a href="<%= profileUrl(place.author) %>"><%= place.author.username %></a> · <% } %><%= postedOn(place) %>
+    </p>
+  </div>
+</article>

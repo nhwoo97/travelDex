@@ -1,0 +1,81 @@
+<% layout('layouts/boilerplate') %>
+<link rel="stylesheet" href="/stylesheets/stars.css" />
+<section class="profile-header d-flex flex-wrap align-items-center gap-3 mb-4">
+  <div class="avatar" aria-hidden="true"><%= profileUser.username.charAt(0).toUpperCase() %></div>
+  <div class="flex-grow-1">
+    <h1 class="mb-0"><%= profileUser.username %></h1>
+    <p class="text-muted mb-0">Traveler since <%= postedOn(profileUser) %><% if (isOwnProfile) { %> · <span class="badge bg-secondary">This is you</span><% } %></p>
+  </div>
+  <% if (isOwnProfile) { %><a class="btn btn-success" href="/places/new">+ Add a place</a><% } %>
+</section>
+
+<div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
+  <div class="col"><div class="stat-tile"><div class="stat-value"><%= stats.places %></div><div class="stat-label">Places shared</div></div></div>
+  <div class="col"><div class="stat-tile"><div class="stat-value"><%= stats.reviews %></div><div class="stat-label">Reviews written</div></div></div>
+  <div class="col"><div class="stat-tile"><div class="stat-value"><%= stats.reviews ? stats.avgGiven.toFixed(1) : "–" %></div><div class="stat-label">Average rating given</div></div></div>
+  <div class="col"><div class="stat-tile"><div class="stat-value"><%= stats.favorites %></div><div class="stat-label">Want to go</div></div></div>
+</div>
+
+<ul class="nav nav-tabs mb-3" role="tablist">
+  <li class="nav-item" role="presentation"><button class="nav-link active" id="tab-places" data-bs-toggle="tab" data-bs-target="#pane-places" type="button" role="tab" aria-controls="pane-places" aria-selected="true">Places (<%= stats.places %>)</button></li>
+  <li class="nav-item" role="presentation"><button class="nav-link" id="tab-reviews" data-bs-toggle="tab" data-bs-target="#pane-reviews" type="button" role="tab" aria-controls="pane-reviews" aria-selected="false">Reviews (<%= stats.reviews %>)</button></li>
+  <li class="nav-item" role="presentation"><button class="nav-link" id="tab-favorites" data-bs-toggle="tab" data-bs-target="#pane-favorites" type="button" role="tab" aria-controls="pane-favorites" aria-selected="false">Want to go (<%= stats.favorites %>)</button></li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="pane-places" role="tabpanel" aria-labelledby="tab-places">
+    <% if (!places.length) { %>
+      <p class="text-muted"><%= isOwnProfile ? "You haven't shared any places yet." : `${profileUser.username} hasn't shared any places yet.` %><% if (isOwnProfile) { %> <a href="/places/new">Add your first one</a>.<% } %></p>
+    <% } else { %>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+        <% for (const place of places) { %><div class="col"><%- include('../partials/placeCard', { place }) %></div><% } %>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="tab-pane fade" id="pane-reviews" role="tabpanel" aria-labelledby="tab-reviews">
+    <% if (!reviews.length) { %>
+      <p class="text-muted"><%= isOwnProfile ? "You haven't written any reviews yet." : `${profileUser.username} hasn't written any reviews yet.` %></p>
+    <% } else { %>
+      <div class="list-group">
+        <% for (const review of reviews) { const place = review.campground; const cover = place.images && place.images[0]; %>
+          <div class="list-group-item py-3">
+            <div class="d-flex gap-3">
+              <a href="/places/<%= place._id %>#review-<%= review._id %>" class="flex-shrink-0">
+                <% if (cover) { %><img class="review-thumb rounded" src="<%= imageUrl(cover, "c_fill,w_160,h_120,q_auto,f_auto") %>" alt="" loading="lazy" /><% } else { %><div class="review-thumb rounded place-card-placeholder"><span>📍</span></div><% } %>
+              </a>
+              <div class="flex-grow-1">
+                <div class="d-flex flex-wrap justify-content-between gap-2">
+                  <a class="fw-bold" href="/places/<%= place._id %>#review-<%= review._id %>"><%= place.title %></a>
+                  <span class="small text-muted"><%= postedOn(review) %></span>
+                </div>
+                <div class="small text-muted mb-1"><%= place.location %></div>
+                <p class="starability-result mb-1" data-rating="<%= review.rating %>">Rated: <%= review.rating %> stars</p>
+                <p class="mb-0"><%= review.body %></p>
+                <% if (isOwnProfile) { %><a class="small" href="/places/<%= place._id %>/reviews/<%= review._id %>/edit">Edit review</a><% } %>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="tab-pane fade" id="pane-favorites" role="tabpanel" aria-labelledby="tab-favorites">
+    <% if (!favorites.length) { %>
+      <p class="text-muted"><%= isOwnProfile ? "Nothing saved yet. Tap “Want to go” on any place to save it here." : `${profileUser.username} hasn't saved any places yet.` %></p>
+    <% } else { %>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+        <% for (const place of favorites) { %><div class="col"><%- include('../partials/placeCard', { place }) %></div><% } %>
+      </div>
+    <% } %>
+  </div>
+</div>
+<script>
+  // Open the tab named in the URL hash (e.g. /users/name#reviews).
+  (function () {
+    const target = { "#reviews": "tab-reviews", "#want-to-go": "tab-favorites", "#places": "tab-places" }[location.hash];
+    const button = target && document.getElementById(target);
+    if (button && window.bootstrap) bootstrap.Tab.getOrCreateInstance(button).show();
+  })();
+</script>

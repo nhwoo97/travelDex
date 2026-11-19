@@ -24,3 +24,37 @@ test("User model has passport-local-mongoose statics", () => {
     assert.equal(typeof User[name], "function", name);
   }
 });
+
+async function withServer(run) {
+  const app = require("../app");
+  const server = app.listen(0);
+  await new Promise(resolve => server.once("listening", resolve));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  try {
+    await run(base);
+  } finally {
+    server.close();
+  }
+}
+
+test("old /campgrounds URLs redirect to /places, keeping method and query", async () => {
+  await withServer(async base => {
+    const response = await fetch(`${base}/campgrounds/abc/edit?x=1`, { redirect: "manual" });
+    assert.equal(response.status, 308);
+    assert.equal(response.headers.get("location"), "/places/abc/edit?x=1");
+    const post = await fetch(`${base}/campgrounds`, { method: "POST", redirect: "manual" });
+    assert.equal(post.status, 308);
+    assert.equal(post.headers.get("location"), "/places");
+  });
+});
+
+test("malformed place ids get a rendered 404 page without touching the database", async () => {
+  await withServer(async base => {
+    const response = await fetch(`${base}/places/not-an-id`);
+    assert.equal(response.status, 404);
+    const html = await response.text();
+    assert.match(html, /Place not found/);
+    assert.match(html, /TravelDex/);
+    assert.equal(response.headers.get("set-cookie"), null, "anonymous visits should not create sessions");
+  });
+});

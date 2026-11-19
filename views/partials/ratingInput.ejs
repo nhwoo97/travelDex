@@ -1,0 +1,8 @@
+<%# Star rating radio group. Locals: selected (1-5) %>
+<fieldset class="starability-basic mb-2">
+  <legend class="visually-hidden">Rating</legend>
+  <% for (let rating = 1; rating <= 5; rating++) { %>
+    <input type="radio" id="rate<%= rating %>" name="review[rating]" value="<%= rating %>" <%= rating === Number(selected) ? "checked" : "" %> />
+    <label for="rate<%= rating %>" title="<%= rating %> star<%= rating === 1 ? "" : "s" %>"><%= rating %> star<%= rating === 1 ? "" : "s" %></label>
+  <% } %>
+</fieldset>
