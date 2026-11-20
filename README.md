@@ -9,8 +9,7 @@ TravelDex is a server-rendered travel and campground discovery application built
 - Public traveler profiles at `/users/<username>` listing a user's places, reviews and want-to-go list. Every username links there.
 - Save places to a "want to go" list.
 
-Old `/campgrounds/...` links redirect to `/places/...`. On startup the app backfills older data (categories, rating totals, review-to-place links); this is idempotent.
-
+Old `/campgrounds/...` links redirect to `/places/...`. On startup the app backfills older data (categories, rating totals, review-to-place links); this is important
 ## Requirements
 - Node.js 24 LTS and npm
 - MongoDB Atlas (or a MongoDB server)
